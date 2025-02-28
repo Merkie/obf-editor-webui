@@ -1,38 +1,28 @@
-import { onCleanup, onMount, Setter } from "solid-js";
+import { onCleanup, onMount } from "solid-js";
 
 export default function useDropzone({
   onDrop,
-  setIsDragging,
 }: {
   onDrop: (files: FileList) => void;
-  setIsDragging: Setter<boolean>;
 }) {
   const handleDragEnter = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    setIsDragging(true);
   };
 
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    setIsDragging(true);
   };
 
   const handleDragLeave = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    setIsDragging(false);
   };
 
   const handleDrop = async (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    setIsDragging(false);
 
     const files = e.dataTransfer?.files;
     if (files && files.length > 0) {
