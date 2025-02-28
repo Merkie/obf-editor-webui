@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #ff5733;
+
+  --buttons-bg-color: #fffaf9;
+
+  --ui-bg-color: #faefe6;
+
+  --ui-button-bg-color: #f4e3d6;
+  --ui-button-text-color: #007acc;
+  --ui-button-border-color: #edd5c4;
+
+  --sentence-builder-bg-color: #fffaf9;
+  --sentence-builder-border-color: #d5d3d1;
+
+  --button-text-color: black;
+
+  --button-bg-color-orange: #ffbe92;
+  --button-border-color-orange: #bb5222;
+
+  --button-bg-color-pink: #ffd5e8;
+  --button-border-color-pink: #c16085;
+
+  --button-bg-color-rose: #ffb0c6;
+  --button-border-color-rose: #c53873;
+
+  --button-bg-color-green: #ceefc7;
+  --button-border-color-green: #5b9248;
+
+  --button-bg-color-blue: #d3f2ff;
+  --button-border-color-blue: #2890d2;
+
+  --button-bg-color-grey: #dfe1e4;
+  --button-border-color-grey: #6e7583;
+
+  --button-bg-color-purple: #d4cde5;
+  --button-border-color-purple: #7868a1;
+
+  --button-bg-color-yellow: #ffebaf;
+  --button-border-color-yellow: #fdad0a;
+}
+
+html,
+body {
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  touch-action: none; /* Prevent gestures like pinch-to-zoom */
+}
+
+html {
+  height: calc(var(--vh, 1vh) * 100);
+}
