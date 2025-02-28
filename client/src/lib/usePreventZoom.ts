@@ -43,6 +43,4 @@ export default function PreventZoom() {
     removeEventListener("keydown", handleKeyDown);
     removeEventListener("resize", handleResize);
   });
-
-  return null; // This component doesn't render anything
 }
