@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: "Inter", sans-serif;
+}
+
 :root {
   --primary: #ff5733;
 
@@ -53,4 +57,16 @@ body {
 
 html {
   height: calc(var(--vh, 1vh) * 100);
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url(...);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-neutral-700) #1f1f1f;
 }
