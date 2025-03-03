@@ -6,6 +6,8 @@ import useLoadBoard from "../lib/useLoadBoard";
 import {
   boardNames,
   currentBoard,
+  currentProjectFileName,
+  currentProjectFileSize,
   handleClearStorage,
   handleObzFileInput,
   loadBoard,
@@ -56,7 +58,24 @@ function ProjectPanel() {
 
   return (
     <UIPanel moveable={true} label="Project">
-      <div class="flex-1"></div>
+      <div class="flex-1 p-2 flex flex-col">
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-neutral-400 text-xs tracking-wide">
+            File Name:
+          </span>
+          <span class="text-neutral-100 -translate-y-[1px] text-sm font-light">
+            {currentProjectFileName()}
+          </span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-neutral-400 text-xs tracking-wide">
+            File Size:
+          </span>
+          <span class="text-neutral-100 -translate-y-[1px] text-sm font-light">
+            {currentProjectFileSize()}
+          </span>
+        </div>
+      </div>
       <UIPanelFooter>
         <UIPanelFooterButton>
           <i class="bi bi-plus-lg"></i>
