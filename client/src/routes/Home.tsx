@@ -1,4 +1,4 @@
-import { createSignal, For, Show, createEffect, JSX } from "solid-js";
+import { createSignal, For, Show, createEffect } from "solid-js";
 import { getImageBlob } from "../lib/db-ops";
 import { cn } from "../lib/cn";
 import usePreventZoom from "../lib/usePreventZoom";
@@ -11,6 +11,15 @@ import {
   loadBoard,
   loadRootBoard,
 } from "../lib/board";
+import {
+  UIPanel,
+  UIPanelFooter,
+  UIPanelFooterButton,
+  UIPanelFooterSelect,
+} from "../components/UIPanel";
+
+const [showTabletMockup, setShowTabletMockup] = createSignal(true);
+const [enableNavigations, setEnableNavigations] = createSignal(false);
 
 export default function Home() {
   usePreventZoom();
@@ -48,37 +57,33 @@ function ProjectPanel() {
   return (
     <UIPanel moveable={true} label="Project">
       <div class="flex-1"></div>
-      <div class="flex gap-1 items-center text-sm p-1 border-t border-neutral-900/[50%]">
-        <button class="w-6 h-6 hover:opacity-70 border border-transparent rounded-xs flex items-center justify-center cursor-pointer">
-          <i class="bi bi-plus-lg text-white"></i>
-        </button>
-        <button
+      <UIPanelFooter>
+        <UIPanelFooterButton>
+          <i class="bi bi-plus-lg"></i>
+        </UIPanelFooterButton>
+        <UIPanelFooterButton
           onClick={() => {
             inputRef?.click();
           }}
-          class="w-6 h-6 hover:opacity-70 border border-transparent rounded-xs flex items-center justify-center cursor-pointer"
         >
-          <i class="bi bi-file-earmark-arrow-up text-white"></i>
-        </button>
-        <button
-          onClick={handleClearStorage}
-          class="w-6 h-6 hover:opacity-70 border border-transparent rounded-xs flex items-center justify-center cursor-pointer"
-        >
-          <i class="bi bi-trash text-white"></i>
-        </button>
+          <i class="bi bi-file-earmark-arrow-up"></i>
+        </UIPanelFooterButton>
+        <UIPanelFooterButton onClick={handleClearStorage}>
+          <i class="bi bi-trash"></i>
+        </UIPanelFooterButton>
         <div class="flex-1"></div>
-        <button class="w-6 h-6 hover:opacity-70 border border-transparent rounded-xs flex items-center justify-center cursor-pointer">
-          <i class="bi bi-gear text-white"></i>
-        </button>
-      </div>
-      <input
-        ref={inputRef}
-        class="hidden"
-        type="file"
-        multiple={false}
-        accept=".obz"
-        onInput={handleObzFileInput}
-      />
+        <UIPanelFooterButton>
+          <i class="bi bi-gear"></i>
+        </UIPanelFooterButton>
+        <input
+          ref={inputRef}
+          class="hidden"
+          type="file"
+          multiple={false}
+          accept=".obz"
+          onInput={handleObzFileInput}
+        />
+      </UIPanelFooter>
     </UIPanel>
   );
 }
@@ -125,11 +130,29 @@ function PreviewPanel() {
   return (
     <UIPanel label="Preview">
       <div class="w-full h-full flex flex-col">
-        <div class="flex-1 bg-neutral-800 relative">
+        <div class="flex-1 bg-neutral-800 relative overflow-hidden">
           <Show when={currentBoard()}>
-            <div class="bg-neutral-950 shadow-xl p-8 rounded-xl w-fit h-fit scale-80 top-1/2 left-1/2 absolute -translate-x-1/2 -translate-y-1/2">
-              <div class="rounded-lg border-2 border-neutral-800 overflow-hidden flex flex-col">
-                <div class="h-[100px] w-[988px] bg-white gap-2 p-4 flex border-b border-neutral-300"></div>
+            <div
+              class={cn("absolute flex flex-col", {
+                "bg-neutral-950 border-2 border-neutral-700/[80%] shadow-xl p-8 rounded-xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-fit max-h-[90%]":
+                  showTabletMockup(),
+                "top-0 left-0 w-full h-full": !showTabletMockup(),
+              })}
+            >
+              <div
+                style={{
+                  "grid-template-columns": "1fr",
+                  "grid-template-rows": showTabletMockup()
+                    ? "12% 81% 7%"
+                    : "1fr",
+                }}
+                class={cn("overflow-hidden flex-1 grid w-full", {
+                  "rounded-lg border-2 border-neutral-800": showTabletMockup(),
+                })}
+              >
+                <Show when={showTabletMockup()}>
+                  <div class="w-full h-full bg-white gap-2 p-4 flex border-b border-neutral-300"></div>
+                </Show>
                 <div
                   style={{
                     "aspect-ratio": "2 / 1",
@@ -140,7 +163,7 @@ function PreviewPanel() {
                       currentBoard()?.grid?.columns || 1 // Handle potentially null currentBoard
                     }, 1fr)`,
                   }}
-                  class="relative grid bg-neutral-100 h-[590px] w-[988px] p-4 gap-2"
+                  class="relative grid bg-neutral-100 w-full h-full p-4 gap-2 overflow-hidden"
                 >
                   <For
                     each={Array.from({
@@ -218,8 +241,10 @@ function PreviewPanel() {
                               }
                             )}
                             onClick={() => {
-                              if (button()?.load_board) {
-                                loadBoard(button()?.load_board.id);
+                              if (enableNavigations()) {
+                                if (button()?.load_board) {
+                                  loadBoard(button()?.load_board.id);
+                                }
                               }
                             }}
                           >
@@ -235,7 +260,7 @@ function PreviewPanel() {
                                 <div class="w-full h-full text-center flex items-center justify-center">
                                   <p
                                     style={{
-                                      "font-size": "0.8vw",
+                                      "font-size": "0.7vw",
                                     }}
                                     class="truncate"
                                   >
@@ -271,90 +296,43 @@ function PreviewPanel() {
                     }}
                   </For>
                 </div>
-                <button
-                  onClick={loadRootBoard}
-                  class="h-[50px] text-2xl cursor-pointer text-center flex items-center justify-center w-[988px] bg-neutral-950 gap-2 p-4 border-t border-neutral-900 text-white"
-                >
-                  <i class="bi bi-house"></i>
-                </button>
+                <Show when={showTabletMockup()}>
+                  <button
+                    onClick={loadRootBoard}
+                    class="text-2xl w-full h-full cursor-pointer text-center flex items-center justify-center bg-neutral-950 gap-2 border-t border-neutral-900 text-white"
+                  >
+                    <i class="bi bi-house"></i>
+                  </button>
+                </Show>
               </div>
             </div>
           </Show>
         </div>
-        <div class="flex gap-1 items-center text-sm p-1 border-t border-neutral-900/[50%]">
-          <Select
+        <UIPanelFooter>
+          <UIPanelFooterSelect
             options={["150%", "125%", "100%", "75%", "50%"]}
             value="100%"
             onInput={() => {}}
           />
-          <button class="bg-neutral-800 w-6 h-6 border border-neutral-900/[50%] rounded-xs flex items-center justify-center cursor-pointer">
-            <i class="bi bi-tablet-landscape text-sky-400"></i>
-          </button>
-          <button class="w-6 h-6 border border-transparent rounded-xs flex items-center justify-center cursor-pointer">
-            <i class="bi bi-folder-symlink text-white"></i>
-          </button>
-        </div>
+          <UIPanelFooterButton
+            onClick={() => {
+              setShowTabletMockup((prev) => !prev);
+            }}
+            toggled={showTabletMockup}
+          >
+            <i class="bi bi-tablet-landscape"></i>
+          </UIPanelFooterButton>
+          <UIPanelFooterButton
+            onClick={() => {
+              setEnableNavigations((prev) => !prev);
+            }}
+            toggled={enableNavigations}
+          >
+            <i class="bi bi-folder-symlink"></i>
+          </UIPanelFooterButton>
+        </UIPanelFooter>
       </div>
     </UIPanel>
-  );
-}
-
-function Select({
-  options,
-  value,
-  onInput,
-}: {
-  options: string[];
-  value: string;
-  onInput: (e: Event) => void;
-}) {
-  return (
-    <div class="bg-neutral-800 cursor-pointer relative border text-xs border-neutral-900/[50%] rounded-xs focus-within:border-neutral-600 group focus-within:ring-1 ring-sky-500">
-      <select
-        onInput={onInput}
-        class="h-6 px-2 pr-6 rounded-xs flex outline-none items-center justify-center cursor-pointer"
-      >
-        <For each={options}>
-          {(option) => (
-            <option value={option} selected={option === value}>
-              {option}
-            </option>
-          )}
-        </For>
-      </select>
-      <div class="absolute pointer-events-none text-white bg-neutral-800 top-0 items-center left-0 w-[calc(100%_-_14px)] h-6 flex px-2 pr-6">
-        {value}
-      </div>
-      <div class="flex text-center text-white pointer-events-none absolute right-0 w-[14px] h-6 top-0 border-l border-neutral-900 group-focus-within:border-neutral-600 flex-col items-center justify-center">
-        <i class="bi bi-chevron-down text-[8px]"></i>
-      </div>
-    </div>
-  );
-}
-
-function UIPanel({
-  label,
-  children,
-  moveable,
-}: {
-  label: string;
-  children: JSX.Element;
-  moveable?: boolean;
-}) {
-  return (
-    <div class="bg-neutral-700/[30%] border-neutral-900/[50%] border w-full h-full flex flex-col">
-      <div class="flex items-center justify-between text-xs p-2 px-3 border-b border-neutral-900/[50%]">
-        <p class="font-semibold text-neutral-300">{label}</p>
-        <Show when={moveable}>
-          <i class="bi bi-list text-white"></i>
-        </Show>
-      </div>
-      <div class="flex-1 relative">
-        <div class="absolute top-0 left-0 w-full h-full flex flex-col">
-          {children}
-        </div>
-      </div>
-    </div>
   );
 }
 
