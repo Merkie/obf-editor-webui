@@ -14,6 +14,10 @@ export const [boardNames, setBoardNames] = createSignal<BoardMetadataRecord[]>(
   []
 );
 export const [currentBoard, setCurrentBoard] = createSignal<any>(null);
+export const [currentProjectFileName, setCurrentProjectFileName] =
+  createSignal<string>("");
+export const [currentProjectFileSize, setCurrentProjectFileSize] =
+  createSignal<string>("");
 
 export async function loadBoard(boardId: string, noScroll = false) {
   const board = await getBoard(boardId);
@@ -40,7 +44,11 @@ export async function handleClearStorage() {
   await clearDB();
   setBoardNames([]);
   setCurrentBoard(null);
+  setCurrentProjectFileName("");
+  setCurrentProjectFileSize("");
   localStorage.removeItem("root_board_id");
+  localStorage.removeItem("current_project_file_name");
+  localStorage.removeItem("current_project_file_size");
 }
 
 export async function handleObzFileInput(event: Event) {
@@ -62,6 +70,8 @@ export async function handleObzFileInput(event: Event) {
     const zip = new JSZip();
     const zipFile = await zip.loadAsync(file);
 
+    console.log("Loaded zip file:", file.name);
+
     // 1. Parse manifest.json
     const manifestFile = zipFile.file("manifest.json");
     if (!manifestFile) {
@@ -73,6 +83,8 @@ export async function handleObzFileInput(event: Event) {
 
     await storeManifest(manifestJson.root);
     localStorage.setItem("root_board_id", manifestJson.root);
+    localStorage.setItem("current_project_file_name", file.name);
+    localStorage.setItem("current_project_file_size", file.size.toString());
 
     // 2. Process .obf boards
     const obfFiles = Object.keys(zipFile.files).filter((f) =>
