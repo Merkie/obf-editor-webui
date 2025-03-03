@@ -20,7 +20,7 @@ import {
   UIPanelFooterSelect,
 } from "../components/UIPanel";
 
-const [showTabletMockup, setShowTabletMockup] = createSignal(true);
+const [showTabletMockup, setShowTabletMockup] = createSignal(false);
 const [enableNavigations, setEnableNavigations] = createSignal(false);
 
 export default function Home() {
