@@ -19,6 +19,7 @@ import {
   UIPanelFooterButton,
   UIPanelFooterSelect,
 } from "../components/UIPanel";
+import prettyBytes from "pretty-bytes";
 
 const [showTabletMockup, setShowTabletMockup] = createSignal(false);
 const [enableNavigations, setEnableNavigations] = createSignal(false);
@@ -72,7 +73,7 @@ function ProjectPanel() {
             File Size:
           </span>
           <span class="text-neutral-100 -translate-y-[1px] text-sm font-light">
-            {currentProjectFileSize()}
+            {prettyBytes(Number(currentProjectFileSize()))}
           </span>
         </div>
       </div>
