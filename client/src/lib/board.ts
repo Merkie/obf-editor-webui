@@ -140,6 +140,14 @@ export async function handleObzFileInput(event: Event) {
       }
     }
 
+    setCurrentProjectFileSize(
+      localStorage.getItem("current_project_file_size") ?? "0"
+    );
+
+    setCurrentProjectFileName(
+      localStorage.getItem("current_project_file_name") ?? ""
+    );
+
     console.log("All data stored in IndexedDB!");
   } catch (err) {
     console.error("Error reading zip file:", err);
